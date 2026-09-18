@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+"use client"
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { motion } from 'framer-motion'
-import { Edit, Trash2, Loader2 } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+"use client"
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { Music, Eye, Play, Download, Users, Plus } from 'lucide-react'
@@ -21,10 +22,10 @@ export default function AdminDashboard() {
         if (error) throw error
 
         const totalMusic = data.length
-        const totalViews = data.reduce((acc, item) => acc + (item.views || 0), 0)
-        const totalPlays = data.reduce((acc, item) => acc + (item.plays || 0), 0)
-        const totalDownloads = data.reduce((acc, item) => acc + (item.downloads || 0), 0)
-        const onlineListeners = data.reduce((acc, item) => acc + (item.online_listeners || 0), 0)
+        const totalViews = data.reduce((acc: number, item: any) => acc + (item.views || 0), 0)
+        const totalPlays = data.reduce((acc: number, item: any) => acc + (item.plays || 0), 0)
+        const totalDownloads = data.reduce((acc: number, item: any) => acc + (item.downloads || 0), 0)
+        const onlineListeners = data.reduce((acc: number, item: any) => acc + (item.online_listeners || 0), 0)
 
         setStats({
           totalMusic,

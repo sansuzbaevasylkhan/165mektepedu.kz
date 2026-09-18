@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+"use client"
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import MusicForm from '@/components/admin/MusicForm'
 import { motion } from 'framer-motion'
