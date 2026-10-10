@@ -45,29 +45,51 @@ export default function AdminLoginPage() {
 
     setLoading(true);
     try {
-      const email = `${formData.phone.replace(/\s+/g, "")}@165mektep.edu.kz`;
-      const { error: authError } = await supabase.auth.signInWithPassword({
+      // Түзету: Телефон нөмірінен тек цифрларды алып, дұрыс email форматына айналдыру
+      const cleanPhone = formData.phone.replace(/\D/g, "");
+      const email = `${cleanPhone}@165mektep.edu.kz`;
+
+      // 1. ТІРКЕЛУ: Алдымен пайдаланушыны тіркеуді әاولةс (Upsert)
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password: formData.password,
       });
 
-      if (authError) throw authError;
+      if (signUpError && signUpError.message !== 'User already registered') {
+        throw signUpError;
+      }
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("first_name, last_name")
-        .single();
+      // 2. ПРОФИЛЬ ЖАСАУ: Profiles кестесіне мәліметтерді қосу/жаңарту
+      const userId = authData?.user?.id || (await supabase.auth.getUser()).data.user?.id;
 
-      const fullName = profile ? `${profile.first_name} ${profile.last_name}` : `${formData.first_name} ${formData.last_name}`;
+      if (userId) {
+        await supabase
+          .from("profiles")
+          .upsert({
+            id: userId,
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            role: 'admin',
+          });
+      }
 
-      setSuccessUser(fullName);
+      // 3. КІРУ: Кіру процесін орындау
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password: formData.password,
+      });
+
+      if (signInError) throw signInError;
+
+      setSuccessUser(`${formData.first_name} ${formData.last_name}`);
 
       setTimeout(() => {
         window.location.href = "/admin";
       }, 2000);
 
     } catch (err: any) {
-      setError(err.message || "Админ панеліне кіру кезінде қате кетті");
+      console.error("Auth Error:", err);
+      setError(err.message || "Кіру немесе тіркелу кезінде қате кетті");
     } finally {
       setLoading(false);
     }
@@ -185,7 +207,7 @@ export default function AdminLoginPage() {
                   <input
                     required
                     type={showPassword ? "text" : "password"}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-12 text-sm transition-all focus:border-primary focus:ring-4 focus:ring-primary/20 outline-none backdrop-blur-sm"
+                    className="w-full rounded rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-12 text-sm transition-all focus:border-primary focus:ring-4 focus:ring-primary/20 outline-none backdrop-blur-sm"
                     placeholder="Админ пароліңізді енгізіңіз"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
