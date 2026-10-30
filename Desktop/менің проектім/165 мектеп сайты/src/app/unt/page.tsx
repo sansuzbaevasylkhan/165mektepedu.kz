@@ -209,4 +209,5 @@ export default function UNTPage() {
   );
 }
 
-import { Trophy } from "lucide-react";
+// Remove duplicate import at the end of the file
+
