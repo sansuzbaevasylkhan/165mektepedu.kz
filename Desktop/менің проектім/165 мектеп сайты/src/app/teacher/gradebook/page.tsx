@@ -49,10 +49,10 @@ export default function TeacherGradebookPage() {
         .from("assignment_grades")
         .select(`
           *,
-          profiles!student_id(first_name, last_name),
-          assignments(title)
+          profiles!student_id(first_name, last_//name),
+          assignments!assignment_id(title, class_id)
         `)
-        .eq("class_id", selectedClass) // Assuming we added class_id to grades or join via assignment
+        .eq("assignments.class_id", selectedClass)
         .order("graded_at", { ascending: false });
 
       if (error) throw error;
