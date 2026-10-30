@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, Lock, User, Phone } from "lucide-react";
+import { Eye, EyeOff, Lock, User, Phone, Sparkles } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 
@@ -53,32 +53,29 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      // Supabase handles email/password. To use phone as ID, we create a virtual email.
-      const email = `${formData.phone.replace(/\s+/g, "")}@165mektep.edu.kz`;
+      // Replace non-digit characters to get only numbers
+      const phoneDigits = formData.phone.replace(/\D/g, "");
+      // Remove the leading '7' if it exists to avoid double 7s if user entered +7
+      const cleanedDigits = phoneDigits.startsWith('7') ? phoneDigits.substring(1) : phoneDigits;
+      const email = `${cleanedDigits}@165mektep.edu.kz`;
 
       const { data, error: authError } = await supabase.auth.signUp({
         email,
         password: formData.password,
-      });
-
-      if (authError) throw authError;
-      if (!data.user) throw new Error("Пайдаланушы құрылған жоқ");
-
-      // Create profile in profiles table
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .insert([
-          {
-            id: data.user.id,
+        options: {
+          data: {
             first_name: formData.first_name,
             last_name: formData.last_name,
             phone: formData.phone,
             role: role,
           },
-        ]);
+        },
+      });
 
-      if (profileError) throw profileError;
+      if (authError) throw authError;
+      if (!data.user) throw new Error("Пайдаланушы құрылған жоқ");
 
+      // Профиль автоматты түрде SQL Trigger арқылы жасалады
       window.location.href = "/dashboard";
     } catch (err: any) {
       setError(err.message || "Тіркелу кезінде қате кетті");
@@ -88,152 +85,205 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="container mx-auto flex min-h-[calc(100vh-64px)] items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-8 rounded-3xl border bg-background p-8 shadow-xl">
-        <div className="flex flex-col items-center text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-2xl">
-            165
+    <div className="container mx-auto flex min-h-screen items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Background Cinematic Elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-400/10 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-[3rem] overflow-hidden border border-white/10 bg-background/60 backdrop-blur-2xl shadow-2xl relative z-10">
+
+        {/* Left Side: Branding/Visual */}
+        <div className="hidden lg:flex flex-col justify-center p-16 bg-gradient-to-br from-[#050505] via-[#101010] to-black text-white relative">
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-[radial-gradient(circle,rgba(212,175,55,0.1)_0%,transparent_70%)]" />
           </div>
-          <h1 className="text-3xl font-bold">Тіркелу</h1>
-          <p className="text-muted-foreground">Платформаға қосылу үшін деректерді енгізіңіз</p>
-        </div>
 
-        <div className="flex p-1 bg-muted rounded-xl">
-          <button
-            type="button"
-            onClick={() => setRole("student")}
-            className={cn(
-              "flex-1 py-2 text-sm font-semibold rounded-lg transition-all",
-              role === "student" ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            ОҚУШЫ
-          </button>
-          <button
-            type="button"
-            onClick={() => setRole("parent")}
-            className={cn(
-              "flex-1 py-2 text-sm font-semibold rounded-lg transition-all",
-              role === "parent" ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            АТА-АНА
-          </button>
-        </div>
-
-        <form onSubmit={handleRegister} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Фамилия</label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <input
-                  required
-                  className="w-full rounded-xl border bg-transparent py-2 pl-10 pr-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
-                  placeholder="Фамилия"
-                  value={formData.first_name}
-                  onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                />
-              </div>
+          <div className="relative z-10 space-y-8">
+            <div className="flex h-20 w-20 items-center justify-center rounded-3xl gold-gradient text-black font-black text-3xl shadow-2xl mb-8">
+              165
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Аты</label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <input
-                  required
-                  className="w-full rounded-xl border bg-transparent py-2 pl-10 pr-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
-                  placeholder="Аты"
-                  value={formData.last_name}
-                  onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                />
+            <h2 className="text-6xl font-black tracking-tighter leading-none">
+              БОЛАШАҚТЫҢ <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#D4AF37] to-[#B8860B]">
+                МЕКТЕБІ
+              </span>
+            </h2>
+            <p className="text-xl text-white/60 font-light leading-relaxed max-w-md">
+              №165 мектеп — бұл тек білім емес, бұл сіздің әлеміңізді өзгертуге мүмкіндік беретін заманауи цифрлық экожүйе.
+            </p>
+            <div className="flex gap-4 pt-8">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-white/80">
+                <Sparkles className="h-3 w-3 text-primary" />
+                Premium Quality
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-white/80">
+                <Sparkles className="h-3 w-3 text-primary" />
+                Modern Tech
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Телефон нөмірі</label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <input
-                required
-                className="w-full rounded-xl border bg-transparent py-2 pl-10 pr-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
-                placeholder="+7 (777)-777-77-77"
-                value={formData.phone}
-                onChange={handlePhoneChange}
-              />
+        {/* Right Side: Register Form */}
+        <div className="p-8 md:p-16 flex flex-col justify-center">
+          <div className="max-w-md mx-auto w-full space-y-8">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-black tracking-tight mb-2">Қош келдіңіз!</h1>
+              <p className="text-muted-foreground font-medium">Білім жолына бірінші қадамды жасаңыз</p>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Пароль</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <input
-              required
-              type={showPassword ? "text" : "password"}
-              className="w-full rounded-xl border bg-transparent py-2 pl-10 pr-10 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
-              placeholder="Пароль ойлап табыңыз"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
+            {/* Role Selector - Premium Segmented Control */}
+            <div className="flex p-1.5 bg-muted/50 rounded-2xl border border-white/10">
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                onClick={() => setRole("student")}
+                className={cn(
+                  "flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 uppercase tracking-widest",
+                  role === "student"
+                    ? "bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-black shadow-lg scale-100"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                ОҚУШЫ
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("parent")}
+                className={cn(
+                  "flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 uppercase tracking-widest",
+                  role === "parent"
+                    ? "bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-black shadow-lg scale-100"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                АТА-АНА
               </button>
             </div>
+
+            <form onSubmit={handleRegister} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Фамилия</label>
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <input
+                      required
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-sm transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                      placeholder="Фамилияңыз"
+                      value={formData.first_name}
+                      onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Аты</label>
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <input
+                      required
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-sm transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                      placeholder="Атыңыз"
+                      value={formData.last_name}
+                      onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Телефон нөмірі</label>
+                <div className="relative group">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <input
+                    required
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-sm transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                    placeholder="+7 (777)-777-77-77"
+                    value={formData.phone}
+                    onChange={handlePhoneChange}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Пароль</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <input
+                    required
+                    type={showPassword ? "text" : "password"}
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-12 text-sm transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                    placeholder="Қатты пароль ойлаңыз"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Парольді қайталау</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <input
+                    required
+                    type={showPassword ? "text" : "password"}
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-sm transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                    placeholder="Парольді қайталаңыз"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 py-3">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  className="h-5 w-5 rounded border-white/10 bg-white/5 text-primary focus:ring-primary cursor-pointer"
+                  checked={agreed}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                />
+                <label htmlFor="terms" className="text-xs text-white/40 cursor-pointer select-none leading-tight">
+                  Мен <span className="text-white/70">әкімшілік және құпиялылық саясатымен</span> толық келісемін
+                </label>
+              </div>
+
+              {error && (
+                <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium text-center animate-shake">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={!agreed || loading}
+                className={cn(
+                  "w-full py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all duration-300 shadow-xl",
+                  agreed && !loading
+                    ? "bg-gradient-to-r from-[#D4AF37] via-[#FFD700] to-[#B8860B] text-black hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]"
+                    : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+                )}
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    ЖҮКТЕЛУДЕ...
+                  </div>
+                ) : "ТІРКЕЛУ"}
+              </button>
+            </form>
+
+            <p className="text-center text-sm text-white/40">
+              Аккаунтыңыз бар ма? <Link href="/login" className="text-primary font-bold hover:text-[#FFD700] transition-colors underline underline-offset-4">Кіріңіз</Link>
+            </p>
           </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Парольді қайталау</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <input
-                required
-                type={showPassword ? "text" : "password"}
-                className="w-full rounded-xl border bg-transparent py-2 pl-10 pr-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
-                placeholder="Парольді қайталаңыз"
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 py-2">
-            <input
-              type="checkbox"
-              id="terms"
-              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              checked={agreed}
-              onChange={(e) => setAgreed(e.target.checked)}
-            />
-            <label htmlFor="terms" className="text-xs text-muted-foreground cursor-pointer select-none">
-              Әкімшілік және құпиялылық саясатымен келісемін
-            </label>
-          </div>
-
-          {error && <p className="text-sm font-medium text-destructive text-center">{error}</p>}
-
-          <button
-            type="submit"
-            disabled={!agreed || loading}
-            className={cn(
-              "w-full rounded-xl py-3 text-sm font-bold transition-all",
-              agreed && !loading
-                ? "bg-primary text-primary-foreground hover:opacity-90"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
-            )}
-          >
-            {loading ? "ЖҮКТЕЛУДЕ..." : "ТІРКЕЛУ"}
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-muted-foreground">
-          Аккаунтыңыз бар ма? <Link href="/login" className="text-primary font-semibold hover:underline">Кіріңіз</Link>
-        </p>
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ const navLinks = [
   { name: "Басты бет", href: "/" },
   { name: "Жаңалықтар", href: "/news" },
   { name: "Мектеп туралы", href: "/about" },
+  { name: "Сабақ кестесі", href: "/timetable" },
   { name: "ҰБТ", href: "/unt" },
 ];
 

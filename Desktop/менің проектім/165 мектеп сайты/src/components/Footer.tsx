@@ -1,57 +1,52 @@
 import Link from "next/link";
-import { Camera, Play, Twitter, MessageCircle, Send } from "lucide-react";
+import { Camera, Play, MessageCircle, Send } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-background">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="border-t border-white/10 bg-[#050505] text-white">
+      <div className="container mx-auto px-6 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
           {/* Brand Section */}
-          <div className="flex flex-col gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-sm">
+          <div className="flex flex-col gap-6">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full gold-gradient text-black font-black text-lg">
                 165
               </div>
-              <span className="text-lg font-bold">№165 МЕКТЕП</span>
+              <span className="text-2xl font-black tracking-tighter uppercase">№165 МЕКТЕП</span>
             </Link>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white/50 leading-relaxed max-w-xs">
               Білім — болашаққа бастар жол. Оқушылардың сапалы білім алып, өз қабілеттерін дамытуына арналған заманауи мектеп платформасы.
             </p>
           </div>
 
-          {/* Quick Links */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-lg font-semibold">Меню</h3>
-            <nav className="flex flex-col gap-2">
-              <Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">Басты бет</Link>
-              <Link href="/news" className="text-sm text-muted-foreground hover:text-primary transition-colors">Жаңалықтар</Link>
-              <Link href="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">Мектеп туралы</Link>
-              <Link href="/unt" className="text-sm text-muted-foreground hover:text-primary transition-colors">ҰБТ</Link>
-              <Link href="/register" className="text-sm text-muted-foreground hover:text-primary transition-colors">Тіркелу</Link>
-              <Link href="/login" className="text-sm text-muted-foreground hover://text-primary transition-colors">Логин</Link>
-            </nav>
-          </div>
-
           {/* Contact & Socials */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-lg font-semibold">Байланыс</h3>
-            <div className="text-sm text-muted-foreground space-y-2">
-              <p>Телефон: +7 (7xx) xxx-xx-xx</p>
-              <p>Email: info@165mektep.edu.kz</p>
-              <p>Мекенжайы: Қазақстан, Алматы қ.</p>
+          <div className="flex flex-col gap-6 md:items-end">
+            <h3 className="text-lg font-bold uppercase tracking-widest text-primary">Байланыс</h3>
+            <div className="text-sm text-white/50 space-y-3 md:text-right">
+              <p className="flex items-center md:justify-end gap-2">Телефон: +7 (7xx) xxx-xx-xx</p>
+              <p className="flex items-center md:justify-end gap-2">Email: info@165mektep.edu.kz</p>
+              <p className="flex items-center md:justify-end gap-2">Мекенжайы: Қазақстан, Алматы қ.</p>
             </div>
-            <div className="flex gap-4 mt-2">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Camera className="h-5 w-5" /></a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Play className="h-5 w-5" /></a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Twitter className="h-5 w-5" /></a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><MessageCircle className="h-5 w-5" /></a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Send className="h-5 w-5" /></a>
+            <div className="flex gap-4 mt-4 md:justify-end">
+              {["Instagram", "TikTok", "YouTube", "Telegram", "WhatsApp"].map((soc) => (
+                <a
+                  key={soc}
+                  href="#"
+                  className="h-10 w-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/50 hover:text-primary hover:border-primary transition-all hover:scale-110"
+                >
+                  <span className="text-[10px] font-bold">{soc[0]}</span>
+                </a>
+              ))}
             </div>
           </div>
         </div>
-
-        <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} №165 Мектеп. Барлық құқықтар қорғалған.
+        <div className="border-t border-white/10 mt-20 pt-8 text-center text-xs text-white/30 tracking-widest uppercase space-y-2">
+          <p>© {new Date().getFullYear()} №165 МЕКТЕП. Барлық құқықтар қорғалған.</p>
+          <div className="flex justify-center gap-4">
+            <Link href="/privacy" className="hover:text-primary transition-colors underline underline-offset-4">
+              Әкімшілік және құпиялылық саясаты
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

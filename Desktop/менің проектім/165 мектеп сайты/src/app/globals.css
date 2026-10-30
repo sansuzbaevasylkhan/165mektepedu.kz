@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(0 0% 5%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(0 0% 5%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(0 0% 5%);
+  --color-primary: #B8860B;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: hsl(0 0% 96%);
+  --color-secondary-foreground: hsl(0 0% 20%);
+  --color-muted: hsl(0 0% 96%);
+  --color-muted-foreground: hsl(0 0% 40%);
+  --color-accent: #D4AF37;
+  --color-accent-foreground: hsl(0 0% 10%);
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+  --color-border: hsl(0 0% 90%);
+  --color-input: hsl(0 0% 90%);
+  --color-ring: #D4AF37;
+  --radius-xl: 1.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --color-background: #050505;
+  --color-foreground: #FFFFFF;
+  --color-card: #0A0A0A;
+  --color-card-foreground: #FFFFFF;
+  --color-popover: #0A0A0A;
+  --color-popover-foreground: #FFFFFF;
+  --color-primary: #FFD700;
+  --color-primary-foreground: #050505;
+  --color-secondary: #111111;
+  --color-secondary-foreground: #FFFFFF;
+  --color-muted: #111111;
+  --color-muted-foreground: #A1A1AA;
+  --color-accent: #D4AF37;
+  --color-accent-foreground: #FFFFFF;
+  --color-destructive: hsl(0 62% 30%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-input: rgba(255, 255, 255, 0.05);
+  --color-ring: #FFD700;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility glass-card {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl;
+}
+
+@utility gold-gradient {
+  @apply bg-gradient-to-br from-[#D4AF37] via-[#FFD700] to-[#B8860B];
+}
+
+@utility premium-button {
+  @apply relative overflow-hidden transition-all duration-300 rounded-full font-bold uppercase tracking-wider active:scale-95;
+}
+
+@utility gold-glow {
+  @apply shadow-[0_0_15px_rgba(212,175,55,0.3)];
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  @apply selection:bg-primary selection:text-primary-foreground;
 }

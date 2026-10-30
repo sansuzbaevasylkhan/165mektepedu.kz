@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import SecurityGuard from "@/components/SecurityGuard";
+import GlobalLayoutWrapper from "@/components/GlobalLayoutWrapper";
+import NotificationCenter from "@/components/NotificationCenter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,19 +33,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="kk"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono और-geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col select-none">
+      <body className="min-h-full flex flex-col select-none font-sans">
         <Providers>
-          <div className="flex flex-col min-h-screen">
-            <SecurityGuard />
-            <Header />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <SecurityGuard />
+          <GlobalLayoutWrapper>
+            {children}
+          </GlobalLayoutWrapper>
+          <NotificationCenter />
         </Providers>
       </body>
     </html>

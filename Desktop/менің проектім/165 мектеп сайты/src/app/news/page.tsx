@@ -7,12 +7,12 @@ import { Calendar, ArrowRight, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NewsItem {
-  id: string;
+  id: number;
   title: string;
-  description: string;
   content: string;
   image_url: string;
   created_at: string;
+  news_categories: { name: string } | null;
 }
 
 export default function NewsPage() {

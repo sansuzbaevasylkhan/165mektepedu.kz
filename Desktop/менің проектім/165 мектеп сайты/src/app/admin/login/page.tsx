@@ -45,41 +45,29 @@ export default function AdminLoginPage() {
 
     setLoading(true);
     try {
-      // 1. Тікелей profiles кестесіне жазу (Auth-сыз, қарапайым жол)
-      const cleanPhone = formData.phone.replace(/\D/g, "");
+      // 1. Convert phone to email format for Supabase Auth
+      const email = `${formData.phone.replace(/\s+/g, "")}@165mektep.edu.kz`;
 
-      // Пайдаланушы бар ма тексереміз
-      const { data: existingProfile } = await supabase
+      // 2. Proper Supabase Auth Login
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password: formData.password,
+      });
+
+      if (authError) throw authError;
+      if (!authData.user) throw new Error("Пайдаланушы табылмады");
+
+      // 3. Verify Admin/Director role
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select("id")
-        .eq("phone", cleanPhone)
+        .select("role")
+        .eq("id", authData.user.id)
         .single();
 
-      if (!existingProfile) {
-        // Егер жоқ болса, жаңа профиль жасап тіркейміз
-        const { error: insertError } = await supabase
-          .from("profiles")
-          .insert([
-            {
-              first_name: formData.first_name,
-              last_name: formData.last_name,
-              phone: cleanPhone,
-              password: formData.password, // Қауіпсіздік үшін бұл жерде хэштелгені дұрыс, бірақ қазір жұмыс істеуі үшін осылай
-              role: 'admin',
-            },
-          ]);
-
-        if (insertError) throw insertError;
+      if (profileError) throw profileError;
+      if (profile?.role !== 'admin' && profile?.role !== 'director') {
+        throw new Error("Сіздің әкімшілік құқығыңыз жоқ");
       }
-
-      // 2. Локальді сессияны сақтау (Бұл бізді Auth қателерінен құтқарады)
-      const userSession = {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        phone: cleanPhone,
-        role: 'admin'
-      };
-      localStorage.setItem("admin_session", JSON.stringify(userSession));
 
       setSuccessUser(`${formData.first_name} ${formData.last_name}`);
 
@@ -89,7 +77,7 @@ export default function AdminLoginPage() {
 
     } catch (err: any) {
       console.error("Login Error:", err);
-      setError(err.message || "Тіркелу немесе кіру кезінде қате кетті");
+      setError(err.message || "Кіру кезінде қате кетті");
     } finally {
       setLoading(false);
     }
