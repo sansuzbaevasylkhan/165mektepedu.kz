@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /cabinet
+Disallow: /ubt
+
+Sitemap: https://165mektep.edu.kz/sitemap.xml

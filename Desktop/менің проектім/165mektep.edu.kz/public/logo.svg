@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="165 MEKTEP">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFE45C"/>
+      <stop offset="1" stop-color="#F5B800"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 3 56 12v19c0 14-10 25-24 30C18 56 8 45 8 31V12L32 3Z" fill="#050505" stroke="url(#g)" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 9 50 16v15c0 10.5-7.4 19-18 23.4C21.400 50 14 41.500 14 31V16L32 9Z" fill="none" stroke="#FFD700" stroke-opacity=".35" stroke-width="1"/>
+  <text x="32" y="38" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="19" fill="url(#g)">165</text>
+  <path d="M20 44h24" stroke="url(#g)" stroke-width="2" stroke-linecap="round"/>
+</svg>
