@@ -5,6 +5,7 @@ import { useToast } from '../../context/ToastContext';
 import { api } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
 import { friendlyError } from '../../lib/errors';
+import { useRealtime } from '../../lib/useRealtime';
 import { fmtDuration, isHttpUrl, readVideoDuration, safeFileName } from '../../lib/util';
 import type { AdminLesson, AdminQuestion, AdminTest, Subject } from '../../types';
 
@@ -21,6 +22,7 @@ function SubjectsTab({ subjects, reload }: { subjects: Subject[]; reload: () => 
   const toast = useToast();
   const confirm = useConfirm();
   const list = { data: subjects, loading: false, error: null as unknown, reload };
+  useRealtime(['subjects'], reload);
   const [draft, setDraft] = useState<{ id?: string; title: string; description: string; image_url: string | null; sort_order: number } | null>(null);
 
   const save = async (e: FormEvent) => {
@@ -101,6 +103,7 @@ function LessonsTab({ subjects, subjectId, setSubjectId }: { subjects: Subject[]
   const toast = useToast();
   const confirm = useConfirm();
   const list = useAsync(() => (subjectId ? fetchLessons(subjectId) : Promise.resolve([] as AdminLesson[])), [subjectId]);
+  useRealtime(['lessons', 'tests'], list.reload);
   const [draft, setDraft] = useState<LessonDraft | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -257,6 +260,7 @@ function TestsTab({ subjects, subjectId, setSubjectId }: { subjects: Subject[]; 
   }, [lessons.data, lessonId]);
 
   const test = useAsync<AdminTest | null>(() => (lessonId ? api.adminTest(lessonId) : Promise.resolve(null)), [lessonId]);
+  useRealtime(['lessons', 'tests', 'questions', 'answer_options'], () => { lessons.reload(); test.reload(); });
   const [head, setHead] = useState<{ title: string; pass: number } | null>(null);
   const [q, setQ] = useState<QDraft | null>(null);
 
@@ -390,6 +394,7 @@ function TestsTab({ subjects, subjectId, setSubjectId }: { subjects: Subject[]; 
 export default function UbtAdmin({ initialTab = 'subjects' }: { initialTab?: Tab }) {
   const [tab, setTab] = useState<Tab>(initialTab);
   const subjects = useAsync(fetchSubjects, []);
+  useRealtime(['subjects'], subjects.reload);
   const [subjectId, setSubjectId] = useState('');
   useEffect(() => {
     if (subjects.data && !subjects.data.some((s) => s.id === subjectId)) setSubjectId(subjects.data[0]?.id ?? '');

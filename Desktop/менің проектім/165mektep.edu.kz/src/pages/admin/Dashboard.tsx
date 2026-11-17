@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorState, ProgressBar, Spinner, useAsync } from '../../components/ui';
 import { BarList, ColumnChart, LineChart } from '../../components/Charts';
@@ -7,7 +6,7 @@ import { api } from '../../lib/api';
 import { friendlyError } from '../../lib/errors';
 import { fmtDateTime } from '../../lib/util';
 import { prettyFromE164 } from '../../lib/phone';
-import { supabase } from '../../lib/supabase';
+import { useRealtime } from '../../lib/useRealtime';
 import { useAuth } from '../../context/AuthContext';
 
 const ACTION: Record<string, string> = { INSERT: 'қосты', UPDATE: 'өзгертті', DELETE: 'өшірді' };
@@ -21,15 +20,7 @@ export default function Dashboard() {
   const { profile } = useAuth();
   const { data, error, loading, reload } = useAsync(() => api.dashboard(14), []);
 
-  useEffect(() => {
-    const ch = supabase.channel('admin-dashboard')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'admin_activity_logs' }, () => reload())
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'profiles' }, () => reload())
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'test_attempts' }, () => reload())
-      .subscribe();
-    return () => { void supabase.removeChannel(ch); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useRealtime(['admin_activity_logs', 'profiles', 'test_attempts', 'parent_student_links', 'timetable'], reload);
 
   if (loading && !data) return <Spinner />;
   if (error || !data) return <ErrorState message={friendlyError(error)} onRetry={reload} />;

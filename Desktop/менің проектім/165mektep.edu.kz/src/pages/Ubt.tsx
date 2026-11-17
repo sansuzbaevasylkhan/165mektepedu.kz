@@ -4,6 +4,7 @@ import { Reveal } from '../components/Reveal';
 import { Icon } from '../components/Icons';
 import { api } from '../lib/api';
 import { friendlyError } from '../lib/errors';
+import { useRealtime } from '../lib/useRealtime';
 import { overallPercent, lessonPercent } from '../lib/util';
 import { useSeo } from '../lib/seo';
 import { useT } from '../i18n';
@@ -12,6 +13,7 @@ export default function Ubt() {
   const t = useT();
   useSeo(t('ubt.title'), 'ҰБТ-ға дайындық: пәндер бойынша видеосабақтар мен тесттер.', '/ubt');
   const { data, error, loading, reload } = useAsync(() => api.catalog(), []);
+  useRealtime(['subjects', 'lessons', 'tests', 'lesson_progress', 'test_attempts'], reload);
 
   if (loading) return <Spinner />;
   if (error || !data) return <section className="container page"><ErrorState message={friendlyError(error)} onRetry={reload} /></section>;

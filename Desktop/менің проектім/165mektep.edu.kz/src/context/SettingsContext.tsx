@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { api } from '../lib/api';
+import { useRealtime } from '../lib/useRealtime';
 import type { SocialLink } from '../types';
 
 interface SettingsState {
@@ -28,6 +29,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => { void reload(); }, [reload]);
+
+  // Сайт баптаулары мен әлеуметтік сілтемелер — барлық бетте бірден жаңарады
+  useRealtime(['site_settings', 'social_links'], () => { void reload(); });
 
   // Сайт баптаулары: favicon, бренд түстері, әдепкі тақырып
   useEffect(() => {

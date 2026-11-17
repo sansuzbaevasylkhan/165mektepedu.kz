@@ -6,12 +6,14 @@ import { useToast } from '../../context/ToastContext';
 import { api } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
 import { friendlyError } from '../../lib/errors';
+import { useRealtime } from '../../lib/useRealtime';
 import { Link } from 'react-router-dom';
 
 export default function SecurityAdmin() {
   const { profile } = useAuth();
   const toast = useToast();
   const dash = useAsync(() => api.dashboard(7), []);
+  useRealtime(['admin_activity_logs', 'profiles', 'test_attempts'], dash.reload);
   const [pass, setPass] = useState('');
   const [confirm, setConfirm] = useState('');
   const [busy, setBusy] = useState(false);

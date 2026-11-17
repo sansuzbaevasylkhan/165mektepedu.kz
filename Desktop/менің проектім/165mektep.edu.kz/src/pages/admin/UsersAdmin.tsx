@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { api } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
 import { friendlyError } from '../../lib/errors';
+import { useRealtime } from '../../lib/useRealtime';
 import { prettyFromE164 } from '../../lib/phone';
 import { fmtDateTime } from '../../lib/util';
 import type { Overview, Profile, Role } from '../../types';
@@ -35,6 +36,7 @@ export default function UsersAdmin() {
     if (error) throw error;
     return (data ?? []) as LinkAdmin[];
   }, []);
+  useRealtime(['profiles', 'parent_student_links'], () => { users.reload(); links.reload(); });
 
   const byId = useMemo(() => new Map((users.data ?? []).map((u): [string, Profile] => [u.id, u])), [users.data]);
   const rows = useMemo(() => {

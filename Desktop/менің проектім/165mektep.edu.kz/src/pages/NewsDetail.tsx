@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Empty, ErrorState, Spinner, useAsync } from '../components/ui';
 import { api } from '../lib/api';
 import { friendlyError } from '../lib/errors';
+import { useRealtime } from '../lib/useRealtime';
 import { fmtDate } from '../lib/util';
 import { useSeo } from '../lib/seo';
 import { Icon } from '../components/Icons';
@@ -10,6 +11,7 @@ import { isHtml, sanitizeHtml } from '../lib/sanitize';
 export default function NewsDetail() {
   const { id = '' } = useParams();
   const { data, error, loading, reload } = useAsync(() => api.newsItem(id), [id]);
+  useRealtime(['news'], reload);
   useSeo(data?.title ?? 'Жаңалық', data?.excerpt || undefined, `/news/${id}`);
 
   if (loading) return <Spinner />;

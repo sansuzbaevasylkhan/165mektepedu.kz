@@ -4,6 +4,7 @@ import { LessonRow } from '../components/LessonRow';
 import { Icon } from '../components/Icons';
 import { api } from '../lib/api';
 import { friendlyError } from '../lib/errors';
+import { useRealtime } from '../lib/useRealtime';
 import { overallPercent } from '../lib/util';
 import { useSeo } from '../lib/seo';
 import { useT } from '../i18n';
@@ -12,6 +13,7 @@ export default function UbtSubject() {
   const t = useT();
   const { subjectId = '' } = useParams();
   const { data, error, loading, reload } = useAsync(() => api.catalog(), []);
+  useRealtime(['subjects', 'lessons', 'tests', 'lesson_progress', 'test_attempts'], reload);
   const subject = data?.subjects.find((s) => s.id === subjectId);
   useSeo(subject?.title ?? t('ubt.title'), undefined, `/ubt/${subjectId}`);
 

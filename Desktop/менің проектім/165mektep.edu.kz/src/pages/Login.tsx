@@ -34,7 +34,7 @@ function LoginForm({ role, gate }: { role: AuthRole; gate?: boolean }) {
       if (!gate) {
         const dest = p.role === 'admin' ? '/admin'
           : p.role === 'director' ? '/direktor-admin'
-          : p.role === 'teacher' ? '/timetable' : '/cabinet';
+          : p.role === 'teacher' ? '/teacher' : '/cabinet';
         nav(dest, { replace: true });
       }
     } catch (err) {

@@ -4,6 +4,7 @@ import { useToast } from '../../context/ToastContext';
 import { api } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
 import { friendlyError } from '../../lib/errors';
+import { useRealtime } from '../../lib/useRealtime';
 import { prettyFromE164 } from '../../lib/phone';
 import { fmtDateTime } from '../../lib/util';
 import type { AdminPerson } from '../../types';
@@ -14,6 +15,7 @@ export default function ParentsAdmin() {
   const toast = useToast();
   const confirm = useConfirm();
   const list = useAsync(() => api.people('parent'), []);
+  useRealtime(['profiles', 'parent_student_links'], list.reload);
   const [q, setQ] = useState('');
   const [view, setView] = useState<AdminPerson | null>(null);
 

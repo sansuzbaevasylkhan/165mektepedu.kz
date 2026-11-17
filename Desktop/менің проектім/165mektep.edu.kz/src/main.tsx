@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { I18nProvider } from './i18n';
 import './styles.css';
+import './styles-teacher.css';
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>

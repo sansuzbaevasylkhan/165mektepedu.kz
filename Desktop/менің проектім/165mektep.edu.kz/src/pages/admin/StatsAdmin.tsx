@@ -2,10 +2,12 @@ import { BarList, ColumnChart, LineChart } from '../../components/Charts';
 import { ErrorState, Spinner, useAsync } from '../../components/ui';
 import { api } from '../../lib/api';
 import { friendlyError } from '../../lib/errors';
+import { useRealtime } from '../../lib/useRealtime';
 import { prettyFromE164 } from '../../lib/phone';
 
 export default function StatsAdmin() {
   const { data, error, loading, reload } = useAsync(() => api.dashboard(30), []);
+  useRealtime(['admin_activity_logs', 'profiles', 'test_attempts', 'parent_student_links'], reload);
   if (loading && !data) return <Spinner />;
   if (error || !data) return <ErrorState message={friendlyError(error)} onRetry={reload} />;
 

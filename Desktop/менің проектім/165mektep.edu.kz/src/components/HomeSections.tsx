@@ -9,6 +9,7 @@ import { ContactList } from './Footer';
 import { Empty, ErrorState, Spinner, useAsync } from './ui';
 import { api } from '../lib/api';
 import { friendlyError } from '../lib/errors';
+import { useRealtime } from '../lib/useRealtime';
 import { useT } from '../i18n';
 import { useSettings } from '../context/SettingsContext';
 import { parseAdvantages, parseDirections } from '../lib/settings';
@@ -66,6 +67,7 @@ export function DirectionsSection() {
 
 export function NewsSection() {
   const news = useAsync(() => api.news(3), []);
+  useRealtime(['news'], news.reload);
   return (
     <section className="section">
       <div className="container">
@@ -106,6 +108,7 @@ export function UbtSection() {
 export function AchievementsSection() {
   const student = useAsync(() => api.content('student_achievement', 6), []);
   const school = useAsync(() => api.content('achievement', 6), []);
+  useRealtime(['content_items'], () => { student.reload(); school.reload(); });
   const items = [...(student.data ?? []), ...(school.data ?? [])].slice(0, 6);
   const loading = student.loading || school.loading;
   const error = student.error ?? school.error;

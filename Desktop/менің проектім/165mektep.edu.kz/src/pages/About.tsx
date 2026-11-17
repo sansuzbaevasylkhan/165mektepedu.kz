@@ -7,6 +7,7 @@ import { SocialLinks } from '../components/SocialLinks';
 import { Icon } from '../components/Icons';
 import { api } from '../lib/api';
 import { friendlyError } from '../lib/errors';
+import { useRealtime } from '../lib/useRealtime';
 import { useSeo } from '../lib/seo';
 import { useSettings } from '../context/SettingsContext';
 import { lines, parseJson, type AboutContent } from '../lib/settings';
@@ -50,6 +51,12 @@ export default function About() {
   const schoolAchievements = useAsync(() => api.content('achievement'), []);
   const studentAchievements = useAsync(() => api.content('student_achievement'), []);
   const gallery = useAsync(() => api.content('gallery'), []);
+  useRealtime(['content_items'], () => {
+    teachers.reload();
+    schoolAchievements.reload();
+    studentAchievements.reload();
+    gallery.reload();
+  });
   const [photo, setPhoto] = useState<ContentItem | null>(null);
 
   return (

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../../components/Logo';
 import { ThemeToggle } from '../../components/Header';
+import { NotificationsBell } from '../../components/NotificationsBell';
 import { Icon, type IconName } from '../../components/Icons';
 import { useAuth } from '../../context/AuthContext';
 import { useSeo } from '../../lib/seo';
@@ -11,47 +12,19 @@ interface NavGroup { title: string; items: NavItem[] }
 
 const GROUPS: NavGroup[] = [
   {
-    title: 'Негізгі',
+    title: 'Мұғалімдер',
     items: [
       { to: '/admin', label: 'Басты панель', icon: 'chart', end: true },
-      { to: '/admin/students', label: 'Оқушылар', icon: 'cap' },
-      { to: '/admin/parents', label: 'Ата-аналар', icon: 'users' },
+      { to: '/admin/teachers', label: 'Мұғалімдер тізімі', icon: 'users' },
+      { to: '/admin/subjects', label: 'Пәндер мен мұғалімдер', icon: 'book' },
+      { to: '/admin/teachers/new', label: 'Жаңа мұғалім', icon: 'plus' },
+      { to: '/admin/tasks', label: 'Тапсырмалар', icon: 'clipboard' },
     ],
   },
   {
-    title: 'Мазмұн',
+    title: 'Бақылау',
     items: [
-      { to: '/admin/news', label: 'Жаңалықтар', icon: 'news' },
-      { to: '/admin/about', label: 'Мектеп туралы', icon: 'book' },
-      { to: '/admin/gallery', label: 'Галерея', icon: 'image' },
-      { to: '/admin/timetable', label: 'Сабақ кестесі', icon: 'clock' },
-    ],
-  },
-  {
-    title: 'ҰБТ басқару',
-    items: [
-      { to: '/admin/ubt/subjects', label: 'Пәндер', icon: 'layers' },
-      { to: '/admin/ubt/lessons', label: 'Видеосабақтар', icon: 'video' },
-      { to: '/admin/ubt/tests', label: 'Тесттер', icon: 'file' },
-      { to: '/admin/progress', label: 'Оқушылар прогресі', icon: 'cap' },
-    ],
-  },
-  {
-    title: 'Аналитика',
-    items: [
-      { to: '/admin/stats', label: 'Статистика', icon: 'chart' },
-      { to: '/admin/logs', label: 'Әрекеттер тарихы', icon: 'history' },
-    ],
-  },
-  {
-    title: 'Сайт',
-    items: [
-      { to: '/admin/home', label: 'Басты бетті басқару', icon: 'home' },
-      { to: '/admin/footer', label: 'Footer басқару', icon: 'grid' },
-      { to: '/admin/social', label: 'Әлеуметтік желілер', icon: 'link' },
-      { to: '/admin/apps', label: 'Google Play / App Store', icon: 'smartphone' },
-      { to: '/admin/site', label: 'Сайт баптаулары', icon: 'settings' },
-      { to: '/admin/security', label: 'Қауіпсіздік', icon: 'shield' },
+      { to: '/admin/teacher-audit', label: 'Audit журналы', icon: 'history' },
     ],
   },
 ];
@@ -70,6 +43,12 @@ export default function AdminLayout() {
   }, [open]);
 
   const signOutAdmin = async () => { await signOut(); nav('/admin/login', { replace: true }); };
+  const isActive = (i: NavItem) => {
+    if (i.to === '/admin/teachers') {
+      return pathname === i.to || (pathname.startsWith(`${i.to}/`) && !pathname.endsWith('/new'));
+    }
+    return i.end ? pathname === i.to : pathname.startsWith(i.to);
+  };
 
   return (
     <div className="admin allow-copy">
@@ -82,6 +61,7 @@ export default function AdminLayout() {
         <div className="grow" />
         <span className="muted small hide-sm">{profile?.last_name} {profile?.first_name}</span>
         <Link to="/" className="btn btn-ghost btn-sm hide-sm">Сайтқа өту</Link>
+        <NotificationsBell />
         <ThemeToggle />
         <button className="icon-btn" aria-label="Шығу" title="Шығу" onClick={() => void signOutAdmin()}><Icon name="out" /></button>
       </header>
@@ -98,12 +78,17 @@ export default function AdminLayout() {
             <div key={g.title} className="admin-group">
               <span className="admin-group-title">{g.title}</span>
               {g.items.map((i) => (
-                <NavLink key={i.to} to={i.to} end={i.end} className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+                <Link key={i.to} to={i.to} className={`admin-link ${isActive(i) ? 'active' : ''}`}>
                   <Icon name={i.icon} size={18} /><span>{i.label}</span>
-                </NavLink>
+                </Link>
               ))}
             </div>
           ))}
+          <p className="director-note">
+            <Icon name="shield" size={16} />
+            ADMIN тек мұғалімдерді басқарады. Оқушы/ата-ана кабинеттеріне және DIRECTOR панеліне кіру мүмкіндігі жоқ —
+            бұл серверде тексеріледі.
+          </p>
           <Link to="/" className="admin-link admin-site-link"><Icon name="globe" size={18} /><span>Сайтқа өту</span></Link>
         </aside>
         <main className="admin-main"><Outlet /></main>

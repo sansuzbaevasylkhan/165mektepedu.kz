@@ -7,9 +7,10 @@ export function fmtDate(iso: string | null | undefined): string {
 
 export function fmtDateTime(iso: string | null | undefined): string {
   if (!iso) return '';
-  return new Date(iso).toLocaleString('kk-KZ', {
-    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
-  });
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 
 export function fmtDuration(sec: number): string {

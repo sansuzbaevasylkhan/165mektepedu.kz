@@ -1,12 +1,14 @@
 import { useState, type FormEvent } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { ErrorState, Spinner, useAsync } from '../components/ui';
 import { PhoneInput } from '../components/PhoneInput';
+import { Icon } from '../components/Icons';
 import { ProgressView } from '../components/ProgressView';
 import { api } from '../lib/api';
 import { friendlyError } from '../lib/errors';
+import { useRealtime } from '../lib/useRealtime';
 import { isValidPhone, prettyFromE164, toE164 } from '../lib/phone';
 import { useSeo } from '../lib/seo';
 import { useT } from '../i18n';
@@ -31,6 +33,7 @@ function StudentCabinet({ profile }: { profile: Profile }) {
   const toast = useToast();
   const overview = useAsync(() => api.overview(), []);
   const links = useAsync(() => api.myLinks(), []);
+  useRealtime(['parent_student_links', 'lesson_progress', 'test_attempts', 'profiles'], () => { overview.reload(); links.reload(); });
 
   const respond = async (l: LinkRow, ok: boolean) => {
     try { await api.respondLink(l.link_id, ok); links.reload(); }
@@ -44,6 +47,11 @@ function StudentCabinet({ profile }: { profile: Profile }) {
   return (
     <>
       <InfoCard profile={profile} />
+      <Link to="/cabinet/assignments" className="adm-quick-card">
+        <Icon name="clipboard" size={22} />
+        <b>Менің тапсырмаларым</b>
+        <span className="muted small">Мұғалім берген тапсырмаларды орындау және жіберу</span>
+      </Link>
       <div className="card pad">
         <h3>{t('cabinet.parentRequests')}</h3>
         {links.loading ? <Spinner />
@@ -86,6 +94,7 @@ function ParentCabinet({ profile }: { profile: Profile }) {
   const [busy, setBusy] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const overview = useAsync(() => (selected ? api.overview(selected) : Promise.resolve(null)), [selected]);
+  useRealtime(['parent_student_links', 'lesson_progress', 'test_attempts', 'profiles'], () => { links.reload(); overview.reload(); });
 
   const send = async (e: FormEvent) => {
     e.preventDefault();
@@ -108,6 +117,11 @@ function ParentCabinet({ profile }: { profile: Profile }) {
   return (
     <>
       <InfoCard profile={profile} />
+      <Link to="/cabinet/admission" className="adm-quick-card">
+        <Icon name="cap" size={22} />
+        <b>Оқушыны мектепке қабылдау</b>
+        <span className="muted small">Өтініш беру, құжаттарды жүктеу және мәртебелерді бақылау</span>
+      </Link>
       <div className="card pad">
         <h3>{t('cabinet.children')}</h3>
         {links.loading ? <Spinner />
@@ -157,7 +171,7 @@ export default function Cabinet() {
   if (!profile) return <Spinner />;
   if (profile.role === 'admin') return <Navigate to="/admin" replace />;
   if (profile.role === 'director') return <Navigate to="/direktor-admin" replace />;
-  if (profile.role === 'teacher') return <Navigate to="/timetable" replace />;
+  if (profile.role === 'teacher') return <Navigate to="/teacher" replace />;
   return (
     <section className="container page narrow-lg stack-lg">
       <h1>{t('cabinet.title')}</h1>

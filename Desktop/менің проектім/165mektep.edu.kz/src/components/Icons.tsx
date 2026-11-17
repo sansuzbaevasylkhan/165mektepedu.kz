@@ -49,6 +49,10 @@ const PATHS: Record<string, ReactNode> = {
   layers: (<path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5" />),
   file: (<><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4M9 12h6M9 16h6" /></>),
   smartphone: (<><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></>),
+  bell: (<><path d="M18 15H6l1.5-2V9a4.5 4.5 0 0 1 9 0v4z" /><path d="M10 19a2 2 0 0 0 4 0" /></>),
+  calendar: (<><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></>),
+  clipboard: (<><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4a3 3 0 0 1 6 0M9 11h6M9 15h4" /></>),
+  filter: (<path d="M3 5h18l-7 8v6l-4-2v-4z" />),
   palette: (<><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2 0-1.4-.8-2-.8-3 0-1 .8-2 2-2H18a3 3 0 0 0 3-3c0-4.4-4-8-9-8z" /><circle cx="7.5" cy="11" r="1" fill="currentColor" stroke="none" /><circle cx="10" cy="7" r="1" fill="currentColor" stroke="none" /><circle cx="15" cy="7.5" r="1" fill="currentColor" stroke="none" /></>),
 };
 

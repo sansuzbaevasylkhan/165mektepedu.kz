@@ -1216,6 +1216,19 @@ do $$
 begin
   begin alter publication supabase_realtime add table public.news; exception when duplicate_object then null; end;
   begin alter publication supabase_realtime add table public.admin_activity_logs; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.site_settings; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.social_links; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.content_items; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.profiles; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.parent_student_links; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.subjects; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.lessons; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.tests; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.questions; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.answer_options; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.lesson_progress; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.test_attempts; exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.timetable_history; exception when duplicate_object then null; end;
 end $$;
 
 -- ---------------------------------------------------------------------

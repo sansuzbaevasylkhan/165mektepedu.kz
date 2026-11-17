@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Layout, ScrollToTop } from './components/Layout';
 import { CopyGuard } from './components/CopyGuard';
-import { RequireAdmin, RequireAuth, RequireDirector, RequireStaff } from './components/RequireAuth';
+import { RequireAdmin, RequireAuth, RequireDirector, RequireStaff, RequireTeacher } from './components/RequireAuth';
 import { Spinner } from './components/ui';
 import Home from './pages/Home';
 import News from './pages/News';
@@ -18,13 +18,13 @@ const Ubt = lazy(() => import('./pages/Ubt'));
 const UbtSubject = lazy(() => import('./pages/UbtSubject'));
 const Lesson = lazy(() => import('./pages/Lesson'));
 const Cabinet = lazy(() => import('./pages/Cabinet'));
+const StudentAssignments = lazy(() => import('./pages/StudentAssignments'));
 const Timetable = lazy(() => import('./pages/Timetable'));
+const ParentAdmission = lazy(() => import('./pages/admission/ParentAdmission'));
+const StaffAdmissions = lazy(() => import('./pages/admission/StaffAdmissions'));
 
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
-const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
-const StudentsAdmin = lazy(() => import('./pages/admin/StudentsAdmin'));
-const ParentsAdmin = lazy(() => import('./pages/admin/ParentsAdmin'));
 const NewsAdmin = lazy(() => import('./pages/admin/NewsAdmin'));
 const AboutAdmin = lazy(() => import('./pages/admin/AboutAdmin'));
 const GalleryAdmin = lazy(() => import('./pages/admin/GalleryAdmin'));
@@ -39,11 +39,33 @@ const AppsAdmin = lazy(() => import('./pages/admin/AppsAdmin'));
 const SiteAdmin = lazy(() => import('./pages/admin/SiteAdmin'));
 const SecurityAdmin = lazy(() => import('./pages/admin/SecurityAdmin'));
 const TimetableAdmin = lazy(() => import('./pages/admin/TimetableAdmin'));
+const AdmissionsAdmin = lazy(() => import('./pages/admission/AdmissionsPage'));
+const DocumentsCenter = lazy(() => import('./pages/admission/DocumentsCenter'));
+const AdmissionAccess = lazy(() => import('./pages/admin/AdmissionAccess'));
+
+const TeachersDashboard = lazy(() => import('./pages/admin/TeachersDashboard'));
+const TeachersAdmin = lazy(() => import('./pages/admin/TeachersAdmin'));
+const TeacherNew = lazy(() => import('./pages/admin/TeacherNew'));
+const TeacherProfile = lazy(() => import('./pages/admin/TeacherProfile'));
+const TasksAdmin = lazy(() => import('./pages/admin/TasksAdmin'));
+const TeacherAudit = lazy(() => import('./pages/admin/TeacherAudit'));
+const SubjectsAdmin = lazy(() => import('./pages/admin/SubjectsAdmin'));
+const TeacherPanelLayout = lazy(() => import('./pages/teacher/TeacherPanelLayout'));
+const TeacherDashboard = lazy(() => import('./pages/teacher/TeacherDashboard'));
+const MySubjects = lazy(() => import('./pages/teacher/MySubjects'));
+const TeacherAssignments = lazy(() => import('./pages/teacher/TeacherAssignments'));
+const TeacherAssignmentDetail = lazy(() => import('./pages/teacher/TeacherAssignmentDetail'));
+const TeacherJournal = lazy(() => import('./pages/teacher/TeacherJournal'));
+const TeacherMessages = lazy(() => import('./pages/teacher/TeacherMessages'));
+const TeacherReports = lazy(() => import('./pages/teacher/TeacherReports'));
+const TeacherTasks = lazy(() => import('./pages/teacher/TeacherTasks'));
 
 const DirectorLogin = lazy(() => import('./pages/director/DirectorLogin'));
 const DirectorLayout = lazy(() => import('./pages/director/DirectorLayout'));
+const DirectorDashboard = lazy(() => import('./pages/director/DirectorDashboard'));
 const DirectorTimetable = lazy(() => import('./pages/director/DirectorTimetable'));
 const DirectorHistory = lazy(() => import('./pages/director/DirectorHistory'));
+const AdminPermissions = lazy(() => import('./pages/director/AdminPermissions'));
 
 export default function App() {
   return (
@@ -65,15 +87,35 @@ export default function App() {
             <Route path="ubt/lesson/:lessonId" element={<RequireAuth><Lesson /></RequireAuth>} />
             <Route path="ubt/:subjectId" element={<RequireAuth><UbtSubject /></RequireAuth>} />
             <Route path="cabinet" element={<RequireAuth><Cabinet /></RequireAuth>} />
+            <Route path="cabinet/assignments" element={<RequireAuth><StudentAssignments /></RequireAuth>} />
+            <Route path="cabinet/admission" element={<RequireAuth><ParentAdmission /></RequireAuth>} />
             <Route path="timetable" element={<RequireStaff><Timetable /></RequireStaff>} />
+            <Route path="staff/admissions" element={<RequireStaff><StaffAdmissions /></RequireStaff>} />
             <Route path="*" element={<NotFound />} />
+          </Route>
+
+          <Route path="teacher" element={<RequireTeacher><TeacherPanelLayout /></RequireTeacher>}>
+            <Route index element={<TeacherDashboard />} />
+            <Route path="subjects" element={<MySubjects />} />
+            <Route path="assignments" element={<TeacherAssignments />} />
+            <Route path="assignments/:id" element={<TeacherAssignmentDetail />} />
+            <Route path="journal" element={<TeacherJournal />} />
+            <Route path="messages" element={<TeacherMessages />} />
+            <Route path="reports" element={<TeacherReports />} />
+            <Route path="tasks" element={<TeacherTasks />} />
           </Route>
 
           <Route path="admin/login" element={<AdminLogin />} />
           <Route path="admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
-            <Route index element={<Dashboard />} />
-            <Route path="students" element={<StudentsAdmin />} />
-            <Route path="parents" element={<ParentsAdmin />} />
+            <Route index element={<TeachersDashboard />} />
+            <Route path="teachers" element={<TeachersAdmin />} />
+            <Route path="teachers/new" element={<TeacherNew />} />
+            <Route path="teachers/:id" element={<TeacherProfile />} />
+            <Route path="subjects" element={<SubjectsAdmin />} />
+            <Route path="tasks" element={<TasksAdmin />} />
+            <Route path="teacher-audit" element={<TeacherAudit />} />
+            <Route path="students" element={<Navigate to="/admin/teachers" replace />} />
+            <Route path="parents" element={<Navigate to="/admin/teachers" replace />} />
             <Route path="news" element={<NewsAdmin />} />
             <Route path="about" element={<AboutAdmin />} />
             <Route path="gallery" element={<GalleryAdmin />} />
@@ -91,14 +133,27 @@ export default function App() {
             <Route path="site" element={<SiteAdmin />} />
             <Route path="security" element={<SecurityAdmin />} />
             <Route path="timetable" element={<TimetableAdmin />} />
+            <Route path="admissions" element={<AdmissionsAdmin />} />
+            <Route path="documents" element={<DocumentsCenter />} />
+            <Route path="admission-access" element={<AdmissionAccess />} />
             <Route path="users" element={<Navigate to="/admin/students" replace />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Route>
 
           <Route path="direktor-admin/login" element={<DirectorLogin />} />
           <Route path="direktor-admin" element={<RequireDirector><DirectorLayout /></RequireDirector>}>
-            <Route index element={<DirectorTimetable />} />
+            <Route index element={<DirectorDashboard />} />
+            <Route path="admissions" element={<AdmissionsAdmin />} />
+            <Route path="documents" element={<DocumentsCenter />} />
+            <Route path="timetable" element={<DirectorTimetable />} />
             <Route path="history" element={<DirectorHistory />} />
+            <Route path="teachers" element={<TeachersAdmin />} />
+            <Route path="teachers/new" element={<TeacherNew />} />
+            <Route path="teachers/:id" element={<TeacherProfile />} />
+            <Route path="academics" element={<SubjectsAdmin />} />
+            <Route path="tasks" element={<TasksAdmin />} />
+            <Route path="teacher-audit" element={<TeacherAudit />} />
+            <Route path="admins" element={<AdminPermissions />} />
             <Route path="*" element={<Navigate to="/direktor-admin" replace />} />
           </Route>
         </Routes>

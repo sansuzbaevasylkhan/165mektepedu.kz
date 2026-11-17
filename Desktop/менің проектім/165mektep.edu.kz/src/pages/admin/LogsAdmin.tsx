@@ -3,6 +3,7 @@ import { Empty, ErrorState, Spinner, useAsync } from '../../components/ui';
 import { Icon } from '../../components/Icons';
 import { api } from '../../lib/api';
 import { friendlyError } from '../../lib/errors';
+import { useRealtime } from '../../lib/useRealtime';
 import { fmtDateTime } from '../../lib/util';
 
 const ACTION: Record<string, string> = { INSERT: 'Қосу', UPDATE: 'Өзгерту', DELETE: 'Өшіру' };
@@ -16,6 +17,7 @@ export default function LogsAdmin() {
   const [entity, setEntity] = useState('');
   const [limit, setLimit] = useState(100);
   const { data, error, loading, reload } = useAsync(() => api.logs(limit, entity), [limit, entity]);
+  useRealtime(['admin_activity_logs'], reload);
 
   return (
     <div className="stack-lg">

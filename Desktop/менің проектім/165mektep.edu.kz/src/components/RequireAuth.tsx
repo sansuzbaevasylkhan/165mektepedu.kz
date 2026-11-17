@@ -38,3 +38,12 @@ export function RequireStaff({ children }: { children: ReactNode }) {
   if (!isStaff) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
+
+/** Мұғалім кабинеті: тек teacher рөлі. */
+export function RequireTeacher({ children }: { children: ReactNode }) {
+  const { profile, loading, isTeacher } = useAuth();
+  if (loading) return <Spinner />;
+  if (!profile) return <Login gate />;
+  if (!isTeacher) return <Navigate to="/" replace />;
+  return <>{children}</>;
+}

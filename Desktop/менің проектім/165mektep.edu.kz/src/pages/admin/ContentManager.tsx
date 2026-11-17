@@ -5,6 +5,7 @@ import { useToast } from '../../context/ToastContext';
 import { api } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
 import { friendlyError } from '../../lib/errors';
+import { useRealtime } from '../../lib/useRealtime';
 import type { ContentItem, ContentKind } from '../../types';
 
 export const KIND_LABEL: Record<ContentKind, string> = {
@@ -22,6 +23,7 @@ export function ContentManager({ kinds, title = 'Мазмұн' }: { kinds: Conte
   const confirm = useConfirm();
   const [kind, setKind] = useState<ContentKind>(kinds[0]);
   const list = useAsync(() => api.content(kind), [kind]);
+  useRealtime(['content_items'], list.reload);
   const [draft, setDraft] = useState<Draft | null>(null);
   const isGallery = kind === 'gallery';
 

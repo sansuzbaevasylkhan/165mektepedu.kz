@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
 import { NewsCard } from '../components/NewsCard';
 import { Empty, ErrorState, Spinner, useAsync } from '../components/ui';
 import { api } from '../lib/api';
 import { friendlyError } from '../lib/errors';
-import { supabase } from '../lib/supabase';
+import { useRealtime } from '../lib/useRealtime';
 import { useSeo } from '../lib/seo';
 import { useT } from '../i18n';
 
@@ -13,13 +12,7 @@ export default function News() {
   const { data, error, loading, reload } = useAsync(() => api.news(), []);
 
   // Realtime: админ жаңалық қосса/өзгертсе, тізім өздігінен жаңарады
-  useEffect(() => {
-    const ch = supabase.channel('news-public')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'news' }, () => reload())
-      .subscribe();
-    return () => { void supabase.removeChannel(ch); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useRealtime(['news'], reload);
 
   return (
     <section className="container page">

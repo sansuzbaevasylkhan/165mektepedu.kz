@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ErrorState, Spinner, useAsync } from '../components/ui';
 import { TimetableBoard } from '../components/TimetableBoard';
 import { useAuth } from '../context/AuthContext';
@@ -35,7 +36,10 @@ export default function Timetable() {
                 : 'Мектептің ағымдағы сабақ кестесі. Өзгерістер автоматты түрде көрсетіледі.'}
             </p>
           </div>
-          <span className="badge badge-open">{entries.length} сабақ</span>
+          <div className="row">
+            {isTeacher && <Link to="/staff/admissions" className="btn btn-ghost btn-sm">Қабылдау өтініштері</Link>}
+            <span className="badge badge-open">{entries.length} сабақ</span>
+          </div>
         </div>
 
         <div className="card pad">

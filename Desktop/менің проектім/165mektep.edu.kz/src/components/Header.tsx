@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from './Logo';
 import { Icon } from './Icons';
+import { NotificationsBell } from './NotificationsBell';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useT } from '../i18n';
@@ -50,7 +51,9 @@ export function Header() {
         <>
           {isAdmin && <NavLink to="/admin" className={cls}>{t('nav.admin')}</NavLink>}
           {isDirector && <NavLink to="/direktor-admin" className={cls}>{t('nav.director')}</NavLink>}
+          {isTeacher && <NavLink to="/teacher" className={cls}>Мұғалім панелі</NavLink>}
           {isTeacher && <NavLink to="/timetable" className={cls}>{t('nav.timetable')}</NavLink>}
+          {isTeacher && <NavLink to="/staff/admissions" className={cls}>Қабылдау</NavLink>}
           {!isDirector && !isTeacher && <NavLink to="/cabinet" className={cls}>{t('nav.cabinet')}</NavLink>}
           <button className="nav-link nav-btn" onClick={logout}>{t('nav.logout')}</button>
         </>
@@ -69,6 +72,7 @@ export function Header() {
         <Logo />
         <nav className="nav-desktop" aria-label="Негізгі мәзір">{links}</nav>
         <div className="header-actions">
+          {(isAdmin || isDirector || isTeacher) && <NotificationsBell />}
           <ThemeToggle />
           <button className="icon-btn burger" onClick={() => setOpen((v) => !v)}
             aria-label={open ? t('nav.close') : t('nav.menu')} aria-expanded={open}>

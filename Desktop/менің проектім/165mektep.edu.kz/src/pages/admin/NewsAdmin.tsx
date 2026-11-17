@@ -5,6 +5,7 @@ import { RichEditor } from '../../components/RichEditor';
 import { useToast } from '../../context/ToastContext';
 import { supabase } from '../../lib/supabase';
 import { friendlyError } from '../../lib/errors';
+import { useRealtime } from '../../lib/useRealtime';
 import { fmtDate } from '../../lib/util';
 import { sanitizeHtml } from '../../lib/sanitize';
 import type { NewsItem } from '../../types';
@@ -20,6 +21,7 @@ export default function NewsAdmin() {
     if (error) throw error;
     return (data ?? []) as NewsItem[];
   }, []);
+  useRealtime(['news'], list.reload);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [busy, setBusy] = useState(false);
 
