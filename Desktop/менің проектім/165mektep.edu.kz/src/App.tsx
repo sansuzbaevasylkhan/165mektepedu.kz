@@ -19,6 +19,7 @@ const UbtSubject = lazy(() => import('./pages/UbtSubject'));
 const Lesson = lazy(() => import('./pages/Lesson'));
 const Cabinet = lazy(() => import('./pages/Cabinet'));
 const StudentAssignments = lazy(() => import('./pages/StudentAssignments'));
+const StudentTests = lazy(() => import('./pages/StudentTests'));
 const Timetable = lazy(() => import('./pages/Timetable'));
 const ParentAdmission = lazy(() => import('./pages/admission/ParentAdmission'));
 const StaffAdmissions = lazy(() => import('./pages/admission/StaffAdmissions'));
@@ -59,6 +60,8 @@ const TeacherJournal = lazy(() => import('./pages/teacher/TeacherJournal'));
 const TeacherMessages = lazy(() => import('./pages/teacher/TeacherMessages'));
 const TeacherReports = lazy(() => import('./pages/teacher/TeacherReports'));
 const TeacherTasks = lazy(() => import('./pages/teacher/TeacherTasks'));
+const TeacherTests = lazy(() => import('./pages/teacher/TeacherTests'));
+const TeacherMaterials = lazy(() => import('./pages/teacher/TeacherMaterials'));
 
 const DirectorLogin = lazy(() => import('./pages/director/DirectorLogin'));
 const DirectorLayout = lazy(() => import('./pages/director/DirectorLayout'));
@@ -88,6 +91,7 @@ export default function App() {
             <Route path="ubt/:subjectId" element={<RequireAuth><UbtSubject /></RequireAuth>} />
             <Route path="cabinet" element={<RequireAuth><Cabinet /></RequireAuth>} />
             <Route path="cabinet/assignments" element={<RequireAuth><StudentAssignments /></RequireAuth>} />
+            <Route path="cabinet/tests" element={<RequireAuth><StudentTests /></RequireAuth>} />
             <Route path="cabinet/admission" element={<RequireAuth><ParentAdmission /></RequireAuth>} />
             <Route path="timetable" element={<RequireStaff><Timetable /></RequireStaff>} />
             <Route path="staff/admissions" element={<RequireStaff><StaffAdmissions /></RequireStaff>} />
@@ -103,6 +107,8 @@ export default function App() {
             <Route path="messages" element={<TeacherMessages />} />
             <Route path="reports" element={<TeacherReports />} />
             <Route path="tasks" element={<TeacherTasks />} />
+            <Route path="tests" element={<TeacherTests />} />
+            <Route path="materials" element={<TeacherMaterials />} />
           </Route>
 
           <Route path="admin/login" element={<AdminLogin />} />

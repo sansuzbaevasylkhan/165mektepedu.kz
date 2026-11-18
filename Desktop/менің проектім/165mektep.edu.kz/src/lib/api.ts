@@ -15,6 +15,9 @@ import type {
   TeacherMessage, TeacherPanelDashboard, TeacherProfileInput, TeacherReportRow,
   TeacherTask, TeacherTaskStatus, TeacherWorkloadRow, TestPublic, TestResult,
   TimetableCatalog, TimetableEntry, TimetableHistoryRow, MessageAudience,
+  AvailableClassTest, ClassTestAttemptRow, ClassTestDetail, ClassTestQuestionInput,
+  ClassTestResults, ClassTestRow, ClassTestStatus, ClassTestSubmitResult,
+  ParentChildSummary, RunningClassTest, StudentDashboard, StudyMaterialRow,
 } from '../types';
 
 async function rpc<T>(fn: string, args?: Record<string, unknown>): Promise<T> {
@@ -456,6 +459,93 @@ export const api = {
     admins: () => rpc<DirectorAdminRow[]>('director_admin_list'),
     setAdminPermission: (admin: string, key: 'view' | 'documents' | 'edit' | 'accounts', allowed: boolean) =>
       rpc<void>('director_set_admin_permission', { p_admin: admin, p_key: key, p_allowed: allowed }),
+  },
+
+  // ---- оқушы / ата-ана dashboard ----
+  student: {
+    dashboard: () => rpc<StudentDashboard>('student_dashboard'),
+  },
+  parent: {
+    children: () => rpc<ParentChildSummary[]>('parent_children'),
+    childDashboard: (student: string) =>
+      rpc<StudentDashboard>('parent_child_dashboard', { p_student: student }),
+    messageTeacher: (p: { teacher: string; student: string; title: string; body: string; important?: boolean }) =>
+      rpc<string>('parent_message_send', {
+        p_teacher: p.teacher, p_student: p.student,
+        p_title: p.title, p_body: p.body, p_important: p.important ?? false,
+      }),
+  },
+  profile: {
+    async uploadAvatar(file: File): Promise<string> {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('NO_USER');
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const path = `${user.id}/avatar.${ext || 'jpg'}`;
+      const { error } = await supabase.storage.from('avatars').upload(path, file, {
+        cacheControl: '3600', contentType: file.type || undefined, upsert: true,
+      });
+      if (error) throw error;
+      await rpc<void>('profile_set_avatar', { p_path: path });
+      return path;
+    },
+    async removeAvatar(): Promise<void> {
+      await rpc<void>('profile_set_avatar', { p_path: '' });
+    },
+    signedUrl: async (path: string) => {
+      const { data, error } = await supabase.storage.from('avatars').createSignedUrl(path, 60 * 60);
+      if (error || !data) throw error ?? new Error('NO_URL');
+      return data.signedUrl;
+    },
+  },
+
+  // ---- мұғалім онлайн тесттері ----
+  tests: {
+    teacherList: () => rpc<ClassTestRow[]>('class_test_list'),
+    detail: (id: string) => rpc<ClassTestDetail>('class_test_detail', { p_id: id }),
+    save: (data: {
+      id?: string | null; subject_id: string; class_name: string; term: string;
+      title: string; description?: string; time_limit_minutes: number;
+      pass_percent: number; max_attempts: number; questions: ClassTestQuestionInput[];
+    }) => rpc<string>('class_test_save', { p_data: data }),
+    setStatus: (id: string, status: ClassTestStatus) =>
+      rpc<void>('class_test_set_status', { p_id: id, p_status: status }),
+    remove: (id: string) => rpc<void>('class_test_delete', { p_id: id }),
+    results: (id: string) => rpc<ClassTestResults>('class_test_results', { p_id: id }),
+    available: () => rpc<AvailableClassTest[]>('class_test_available'),
+    start: (id: string) => rpc<RunningClassTest>('class_test_start', { p_id: id }),
+    submit: (attempt: string, answers: Record<string, string>) =>
+      rpc<ClassTestSubmitResult>('class_test_submit', { p_attempt: attempt, p_answers: answers }),
+    myAttempts: () => rpc<ClassTestAttemptRow[]>('class_test_my_attempts'),
+  },
+
+  // ---- оқу материалдары ----
+  materials: {
+    list: (klass = '') => rpc<StudyMaterialRow[]>('study_material_list', { p_class: klass }),
+    save: (p: {
+      id?: string | null; subject_id: string; class_name: string; title: string;
+      description?: string; file_name: string; storage_path: string;
+      mime_type?: string | null; size_bytes?: number | null;
+    }) => rpc<string>('study_material_save', { p_data: p }),
+    async remove(id: string): Promise<void> {
+      const path = await rpc<string>('study_material_delete', { p_id: id });
+      if (path) await supabase.storage.from('study-materials').remove([path]);
+    },
+    async upload(subjectId: string, file: File) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('NO_USER');
+      const ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const path = `${user.id}/${subjectId}/${crypto.randomUUID()}.${ext || 'bin'}`;
+      const { error } = await supabase.storage.from('study-materials').upload(path, file, {
+        cacheControl: '3600', contentType: file.type || undefined,
+      });
+      if (error) throw error;
+      return path;
+    },
+    signedUrl: async (path: string) => {
+      const { data, error } = await supabase.storage.from('study-materials').createSignedUrl(path, 60 * 30);
+      if (error || !data) throw error ?? new Error('NO_URL');
+      return data.signedUrl;
+    },
   },
 
   // ---- хабарламалар (Realtime + браузер push) ----

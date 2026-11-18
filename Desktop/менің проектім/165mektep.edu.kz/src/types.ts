@@ -9,6 +9,7 @@ export interface Profile {
   is_blocked: boolean;
   last_seen_at: string | null;
   created_at: string;
+  avatar_path?: string | null;
 }
 
 export interface NewsItem {
@@ -1094,4 +1095,233 @@ export interface StudentProgress {
     id: string; subject: string; kind: JournalKind; score: number;
     max_score: number; date: string; comment: string;
   }[];
+}
+
+// ---- SMART SCHOOL: студент/ата-ана dashboard, тесттер, материалдар ----
+export interface SnapshotSubject {
+  subject_id: string;
+  subject_title: string;
+  average: number | null;
+  count: number;
+}
+
+export interface SnapshotGrade {
+  id: string;
+  subject_title: string;
+  kind: JournalKind;
+  score: number;
+  max_score: number;
+  lesson_date: string;
+  comment: string;
+}
+
+export interface SnapshotLesson {
+  id: string;
+  subject_title: string;
+  teacher_name: string;
+  start_time: string;
+  end_time: string | null;
+  room: string;
+}
+
+export interface SnapshotTeacher {
+  subject_id: string;
+  subject_title: string;
+  teacher_id: string;
+  teacher_name: string;
+}
+
+export interface SnapshotAchievement {
+  code: string;
+  title: string;
+  description: string;
+  icon: string;
+  got: boolean;
+  awarded_at: string | null;
+}
+
+export interface SnapshotCertificate {
+  id: string;
+  title: string;
+  description: string;
+  number: string | null;
+  issued_at: string;
+  file_path: string | null;
+}
+
+export interface SnapshotMaterial {
+  id: string;
+  subject_title: string;
+  title: string;
+  file_name: string;
+  storage_path: string;
+  mime_type: string | null;
+  size_bytes: number | null;
+  created_at: string;
+}
+
+export interface StudentDashboard {
+  profile: {
+    id: string; first_name: string; last_name: string;
+    phone: string; role: Role; avatar_path: string | null;
+  };
+  class_name: string | null;
+  academic_year: string | null;
+  gpa: number;
+  grades_count: number;
+  attendance_percent: number;
+  attendance: {
+    total: number; present: number; late: number; excused: number; absent: number;
+  };
+  subjects: SnapshotSubject[];
+  recent_grades: SnapshotGrade[];
+  today_lessons: SnapshotLesson[];
+  teachers: SnapshotTeacher[];
+  assignments: { total: number; pending: number };
+  achievements: SnapshotAchievement[];
+  certificates: SnapshotCertificate[];
+  materials: SnapshotMaterial[];
+}
+
+export interface ParentChildSummary {
+  student_id: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  avatar_path: string | null;
+  class_name: string | null;
+  gpa: number;
+  attendance_percent: number;
+}
+
+export type ClassTestStatus = 'draft' | 'published' | 'closed';
+
+export interface ClassTestRow {
+  id: string;
+  subject_id: string;
+  subject_title: string;
+  class_name: string;
+  term: string;
+  title: string;
+  description: string;
+  status: ClassTestStatus;
+  time_limit_minutes: number;
+  pass_percent: number;
+  max_attempts: number;
+  questions: number;
+  attempts: number;
+  created_at: string;
+}
+
+export interface ClassTestOptionInput {
+  id?: string;
+  text: string;
+  is_correct?: boolean;
+}
+
+export interface ClassTestQuestionInput {
+  id?: string;
+  text: string;
+  explanation?: string;
+  points: number;
+  options: ClassTestOptionInput[];
+}
+
+export interface ClassTestDetail {
+  id: string;
+  subject_id: string;
+  class_name: string;
+  term: string;
+  title: string;
+  description: string;
+  time_limit_minutes: number;
+  pass_percent: number;
+  max_attempts: number;
+  status: ClassTestStatus;
+  questions: {
+    id: string; text: string; explanation: string; points: number;
+    options: { id: string; text: string; is_correct: boolean }[];
+  }[];
+}
+
+export interface AvailableClassTest {
+  id: string;
+  title: string;
+  description: string;
+  subject_title: string;
+  class_name: string;
+  term: string;
+  time_limit_minutes: number;
+  pass_percent: number;
+  max_attempts: number;
+  questions: number;
+  attempts_used: number;
+  best_percent: number | null;
+}
+
+export interface RunningClassTest {
+  attempt_id: string;
+  started_at: string;
+  test: {
+    id: string;
+    title: string;
+    description: string;
+    time_limit_minutes: number;
+    pass_percent: number;
+    subject_title: string;
+    questions: {
+      id: string; text: string; points: number;
+      options: { id: string; text: string }[];
+    }[];
+  };
+}
+
+export interface ClassTestSubmitResult {
+  attempt_id: string;
+  score: number;
+  max_score: number;
+  percent: number;
+  passed: boolean;
+  pass_percent: number;
+  correct_count: number;
+  question_count: number;
+}
+
+export interface ClassTestAttemptRow {
+  id: string;
+  test_id: string;
+  title: string;
+  subject_title: string;
+  percent: number;
+  score: number;
+  max_score: number;
+  passed: boolean;
+  finished_at: string | null;
+  status: 'in_progress' | 'submitted';
+}
+
+export interface ClassTestResults {
+  test: { id: string; title: string; class_name: string; questions: number };
+  attempts: {
+    id: string; student_id: string; student_name: string;
+    started_at: string; finished_at: string | null;
+    score: number; max_score: number; percent: number;
+    passed: boolean; status: 'in_progress' | 'submitted';
+  }[];
+}
+
+export interface StudyMaterialRow {
+  id: string;
+  subject_id: string;
+  subject_title: string;
+  class_name: string;
+  title: string;
+  description: string;
+  file_name: string;
+  storage_path: string;
+  mime_type: string | null;
+  size_bytes: number | null;
+  teacher_id: string;
+  teacher_name: string;
+  created_at: string;
 }

@@ -22,6 +22,8 @@ const GROUPS: PanelGroup[] = [
     title: 'Оқу процесі',
     items: [
       { to: '/teacher/assignments', label: 'Тапсырмалар', icon: 'clipboard' },
+      { to: '/teacher/tests', label: 'Онлайн тесттер', icon: 'check' },
+      { to: '/teacher/materials', label: 'Оқу материалдары', icon: 'file' },
       { to: '/teacher/journal', label: 'Электрондық журнал', icon: 'grid' },
       { to: '/teacher/messages', label: 'Хабарламалар', icon: 'mail' },
       { to: '/teacher/reports', label: 'Апталық есеп', icon: 'file' },

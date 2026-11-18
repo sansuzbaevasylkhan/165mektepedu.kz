@@ -505,3 +505,68 @@ button.tch-chip.active { background: var(--gold); border-color: var(--gold); col
   .tch-page, .notif-panel { animation: none; }
   .tch-task, .tch-mini-stat, .tch-row, .card { transition: none; }
 }
+
+/* ---- Кабинет: оқушы / ата-ана dashboard ---- */
+.cab-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.cab-header-main { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.cab-header-main h2 { margin: 0 0 2px; }
+.cab-header-main p { margin: 0; }
+.cab-header-actions { display: flex; gap: 8px; align-items: center; }
+.cab-avatar { border-radius: 50%; object-fit: cover; border: 2px solid var(--border); background: var(--surface); flex: none; }
+.tch-big-number { font-size: clamp(1.6rem, 3vw, 2.1rem); color: var(--gold-text); line-height: 1; }
+.tch-att-mini { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+.tch-att-mini b { color: var(--text); }
+.small-heading { margin: 0 0 4px; font-size: 0.95rem; }
+.form-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.form-row > .field { flex: 1 1 220px; }
+.cab-child-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-bottom: 8px; }
+.cab-child {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; text-align: left;
+  border-radius: 14px; border: 1px solid var(--border-soft); background: var(--surface);
+  color: inherit; cursor: pointer; transition: border-color 0.18s, background 0.18s;
+}
+.cab-child:hover { border-color: var(--border); background: var(--surface-hover); }
+.cab-child.active { border-color: var(--gold); background: rgba(255, 215, 0, 0.07); }
+.cab-child-main { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.cab-child-main b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cab-child-stats { display: flex; gap: 10px; font-size: 0.72rem; color: var(--muted); text-align: right; }
+.cab-child-stats span { display: flex; flex-direction: column; }
+.cab-child-stats b { color: var(--gold-text); font-size: 0.95rem; }
+
+/* ---- Мұғалім: онлайн тесттер ---- */
+.tch-test-list { display: grid; gap: 12px; }
+.tch-test-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+.tch-test-head h3 { margin: 6px 0 4px; }
+.tch-test-head p { margin: 0; }
+.tch-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.tch-q-card { display: grid; gap: 10px; }
+.tch-q-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tch-inline-field { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted); }
+.tch-inline-field .input { width: 72px; }
+.tch-options { display: grid; gap: 8px; }
+.tch-option-row { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
+.tch-radio { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+.tch-check { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; }
+.tch-answer {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px;
+  border: 1px solid var(--border-soft); background: var(--surface); cursor: pointer; transition: border-color 0.15s, background 0.15s;
+}
+.tch-answer:hover { border-color: var(--border); }
+.tch-answer.active { border-color: var(--gold); background: rgba(255, 215, 0, 0.08); }
+.tch-timer {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+  background: rgba(61, 220, 132, 0.12); color: var(--ok); font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.tch-timer.danger { background: rgba(255, 100, 100, 0.14); color: var(--danger); }
+.tch-runner .modal-body { max-height: 62vh; overflow-y: auto; }
+.tch-runner .tch-modal-actions { padding: 14px 22px 18px; border-top: 1px solid var(--border-soft); }
+
+@media (max-width: 720px) {
+  .cab-header { flex-direction: column; align-items: flex-start; }
+  .cab-child-stats { flex-direction: row; }
+  .tch-option-row { grid-template-columns: auto 1fr; }
+  .tch-option-row .tch-remove { grid-column: 2; justify-self: end; }
+  .tch-test-head { flex-direction: column; }
+  .tch-test-head .btn { width: 100%; }
+  .tch-runner .modal-body { max-height: none; }
+}
